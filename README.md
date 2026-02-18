@@ -1,50 +1,169 @@
-# Welcome to your Expo app 👋
+🚚 Mini Delivery App — Offline-First React Native (Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A production-minded offline-first delivery management application built with React Native + Expo + TypeScript.
+The app supports local order creation without connectivity, data consolidation from multiple sources, and map-based delivery tracking with simulated real-time movement.
 
-## Get started
+Designed to demonstrate architectural decision-making, state orchestration, and mobile systems thinking rather than only UI implementation.
 
-1. Install dependencies
+✨ Key Capabilities
 
-   ```bash
-   npm install
-   ```
+📦 Create delivery requests with address search
 
-2. Start the app
+📴 Full offline order persistence using SQLite
 
-   ```bash
-   npx expo start
-   ```
+🔄 Unified order list (mock + local database)
 
-In the output, you'll find options to open the app in a
+🏷️ Visual sync status indicators for offline data
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+🧭 Map-based tracking with animated marker movement
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+📍 Live device location as delivery origin
 
-## Get a fresh project
+🧠 Deterministic route simulation without paid APIs
 
-When you're ready, run:
+🔁 Pull-to-refresh data reconciliation
 
-```bash
-npm run reset-project
-```
+🧠 Architectural Highlights
+Offline-First Data Strategy
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Orders created without connectivity are stored in Expo SQLite, ensuring:
 
-## Learn more
+Durable persistence
 
-To learn more about developing your project with Expo, look at the following resources:
+Structured querying (not key-value)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Future background sync readiness
 
-## Join the community
+Each locally created order is tagged:
 
-Join our community of developers creating universal apps.
+status: "offline"
+syncStatus: "local"
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This enables clear UI state, merge logic, and eventual consistency design.
+
+Data Consolidation Layer
+
+The hub screen merges:
+
+In-memory mock dataset (simulated remote source)
+
+SQLite persisted offline orders
+
+This demonstrates handling heterogeneous data sources and building a single presentation model for UI.
+
+State Management — Context over Redux
+
+Used React Context intentionally:
+
+Minimal boilerplate
+
+Predictable shared state
+
+Appropriate for app scope
+
+Avoids premature over-engineering
+
+This reflects a right-sizing mindset rather than tool-driven architecture.
+
+Tracking Simulation Engine
+
+Instead of relying on paid routing APIs, the tracking flow:
+
+Captures device GPS as origin (expo-location)
+
+Geocodes destination from address
+
+Generates a polyline route
+
+Decodes into coordinate steps
+
+Animates marker along the path with timed updates
+
+Auto-terminates at destination
+
+This showcases algorithmic control of map state, not just rendering.
+
+🗺️ Map & Movement Logic
+
+Smooth camera follow using animateToRegion
+
+Step-based coordinate interpolation
+
+Deterministic interval scheduler
+
+Automatic stop condition at final coordinate
+
+This mimics real delivery telemetry while remaining fully local.
+
+🧰 Technology Choices
+Technology Rationale
+Expo Fast iteration, native APIs, reduced setup overhead
+TypeScript Strong typing for order models and DB mapping
+Expo SQLite Relational offline storage, scalable beyond AsyncStorage
+React Context Lightweight global state without unnecessary complexity
+react-native-maps Mature, performant native map rendering
+expo-location Reliable cross-platform GPS access
+Google Places Autocomplete Accurate address input UX
+@mapbox/polyline Efficient route decoding for animation
+expo-network Online/offline awareness for save logic
+axios Prepared for future sync layer
+🔁 Order Lifecycle
+
+User creates request
+
+Network check:
+
+Online → (ready for API integration)
+
+Offline → stored in SQLite
+
+Hub merges datasets
+
+Unsynced orders flagged visually
+
+“In Transit” orders open tracking view
+
+This mirrors real production delivery flows.
+
+🎯 Evaluation Alignment
+
+This implementation focuses on:
+
+Architectural clarity → offline-first, merge layer, deterministic tracking
+
+Problem solving → local persistence, data reconciliation, route simulation
+
+Code quality → typed models, isolated DB module, reusable logic
+
+Scalability thinking → sync-ready schema, network abstraction
+
+User experience → immediate offline feedback, smooth map animation
+
+⚙️ Run the Project
+npm install
+npx expo start
+
+Works on:
+
+Android device / emulator
+
+iOS simulator (macOS)
+
+Expo Go
+
+🔮 Production-Ready Extensions
+
+Background sync queue for offline orders
+
+Server reconciliation & conflict handling
+
+Real routing API with ETA calculation
+
+WebSocket live tracking
+
+Distance-based interpolation instead of fixed steps
+
+👨‍💻 Author
+
+Utshav Nepal
+React Native Developer
